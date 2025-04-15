@@ -1,0 +1,12 @@
+<h1><%= @trip.name %></h1>
+<p><strong>Start:</strong> <%= @trip.start_date %></p>
+<p><strong>End:</strong> <%= @trip.end_date %></p>
+
+<h2>Participants</h2>
+<ul>
+  <% @trip.participants.each do |p| %>
+    <li><%= p.name %> (<%= p.email %>)</li>
+  <% end %>
+</ul>
+
+<%= link_to 'Back to Trips', trips_path, class: 'btn btn-secondary' %>

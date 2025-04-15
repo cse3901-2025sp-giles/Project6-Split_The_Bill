@@ -1,0 +1,56 @@
+<h1>Create a New Trip</h1>
+
+<%= form_with model: @trip do |f| %>
+  <div>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :start_date %><br>
+    <%= f.date_field :start_date %>
+  </div>
+
+  <div>
+    <%= f.label :end_date %><br>
+    <%= f.date_field :end_date %>
+  </div>
+
+  <h3>Participants</h3>
+  
+  <div id="participants-fields">
+    <%= f.fields_for :participants do |p| %>
+      <div class="participant-fields">
+        <%= p.label :name %><br>
+        <%= p.text_field :name %><br>
+        <%= p.label :email %><br>
+        <%= p.email_field :email %><br>
+      </div>
+    <% end %>
+  </div>
+
+  <%= link_to 'Add Participant', '#', id: 'add-participant', class: 'btn btn-secondary' %><br>
+
+  <%= f.submit "Create Trip" %>
+<% end %>
+
+<%= link_to 'Back to Trips', trips_path, class: 'btn btn-secondary' %>
+
+<!--add new participant fields -->
+<script>
+  document.getElementById("add-participant").addEventListener("click", function(event) {
+    event.preventDefault();  // Prevent the default action of the link
+
+    // Clone the first participant field and append it to the participants fields container
+    var participantFields = document.querySelector(".participant-fields");
+    var clone = participantFields.cloneNode(true);
+    
+    // Clear the input values of the cloned fields
+    var inputs = clone.querySelectorAll("input");
+    inputs.forEach(function(input) {
+      input.value = "";
+    });
+
+    document.getElementById("participants-fields").appendChild(clone);
+  });
+</script>
