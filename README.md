@@ -42,7 +42,7 @@ When a group of people go on a multi-day trip together, there are many shared ex
 
 2.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Shijie-0507/Project6-Split_The_Bill.git
+    git clone https://github.com/cse3901-2025sp-giles/Project6-Split_The_Bill.git
     cd Project6-Split_The_Bill
     ```
 
