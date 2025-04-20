@@ -1,0 +1,33 @@
+<%= form_with model: [@trip, @expense] do |f| %>
+  <div>
+    <%= f.label :description %><br>
+    <%= f.text_field :description %>
+  </div>
+
+  <div>
+    <%= f.label :amount %><br>
+    <%= f.number_field :amount, step: "0.01" %>
+  </div>
+
+  <div>
+    <%= f.label :date %><br>
+    <%= f.date_field :date, min: @trip.start_date, max: @trip.end_date %>
+  </div>
+
+  <div>
+    <%= f.label :payer_name, "Who Paid?" %><br>
+    <%= f.select :payer_name, @trip.participants.map(&:name), prompt: "Select Payer" %>
+  </div>
+
+  <div>
+    <%= f.label :category %><br>
+    <%= f.select :category, ["Food", "Lodging", "Transportation", "Entertainment", "Other"], prompt: "Select Category" %>
+  </div>
+
+  <div>
+    <%= f.label :participant_ids, "Shared With:" %><br>
+    <%= f.collection_check_boxes :participant_ids, @trip.participants, :id, :name %>
+  </div>
+
+  <%= f.submit %>
+<% end %>

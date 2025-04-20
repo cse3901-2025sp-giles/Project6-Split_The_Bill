@@ -1,0 +1,37 @@
+<h1>Add Expense</h1>
+
+<%= form_with model: [@trip, @expense] do |f| %>
+  <p>
+    <%= f.label :description %><br>
+    <%= f.text_field :description %> <!-- what the expense was for -->
+  </p>
+
+  <div>
+    <%= f.label :category %><br>
+    <%= f.select :category, ["Food", "Lodging", "Transportation", "Entertainment", "Other"], prompt: "Select Category" %>
+  </div>
+
+  <p>
+    <%= f.label :amount %><br>
+    <%= f.number_field :amount, step: 0.01 %> <!-- how much was spent -->
+  </p>
+
+  <p>
+    <%= f.label :date %><br>
+    <%= f.date_field :date, min: @trip.start_date, max: @trip.end_date %>
+  </p>
+
+  <p>
+    <%= f.label :payer_name, "Who Paid?" %><br>
+    <%= f.select :payer_name, @trip.participants.pluck(:name), prompt: "Select who paid" %>
+  </p>
+
+  <p>
+    <%= f.label :participant_ids, "Who Shared?" %><br>
+    <%= f.collection_check_boxes :participant_ids, @trip.participants, :id, :name %> <!-- checkboxes for shared participants -->
+  </p>
+
+  <%= f.submit "Save Expense" %>
+<% end %>
+
+<%= link_to "Back to Trip", trip_path(@trip) %>

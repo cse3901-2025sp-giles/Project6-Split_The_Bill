@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_15_121405) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_20_200812) do
+  create_table "expense_participants", force: :cascade do |t|
+    t.integer "expense_id", null: false
+    t.integer "participant_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expense_id"], name: "index_expense_participants_on_expense_id"
+    t.index ["participant_id"], name: "index_expense_participants_on_participant_id"
+  end
+
+  create_table "expenses", force: :cascade do |t|
+    t.string "description"
+    t.decimal "amount"
+    t.date "date"
+    t.string "payer_name"
+    t.integer "trip_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "category"
+    t.index ["trip_id"], name: "index_expenses_on_trip_id"
+  end
+
   create_table "participants", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -42,6 +63,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_15_121405) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "expense_participants", "expenses"
+  add_foreign_key "expense_participants", "participants"
+  add_foreign_key "expenses", "trips"
   add_foreign_key "participants", "trips"
   add_foreign_key "trips", "users"
 end

@@ -1,0 +1,83 @@
+<h1>Edit Trip</h1>
+
+<%= form_with model: @trip, local: true, data: { turbo: false } do |f| %>
+  <div>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :start_date %><br>
+    <%= f.date_field :start_date %>
+  </div>
+
+  <div>
+    <%= f.label :end_date %><br>
+    <%= f.date_field :end_date %>
+  </div>
+
+  <h3>Participants</h3>
+  <div id="participants-fields">
+    <% @trip.participants.each_with_index do |participant, index| %>
+      <%= f.fields_for :participants, participant, child_index: index do |p| %>
+        <div class="participant-fields">
+          <%= p.hidden_field :id %>
+          <%= p.hidden_field :_destroy, class: "destroy-flag" %>
+
+          <%= p.label :name %><br>
+          <%= p.text_field :name %><br>
+          <%= p.label :email %><br>
+          <%= p.email_field :email %><br>
+
+          <button type="button" class="remove-participant btn btn-danger">Remove</button>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= link_to 'Add Participant', '#', id: 'add-participant', class: 'btn btn-secondary' %><br><br>
+  <%= f.submit "Update Trip", class: "btn btn-primary" %>
+<% end %>
+
+<%= link_to "Back", trip_path(@trip), class: "btn btn-secondary" %>
+
+<template id="participant-template">
+  <div class="participant-fields">
+    <label for="">Name</label><br>
+    <input type="text" name="trip[participants_attributes][INDEX][name]" /><br>
+    <label for="">Email</label><br>
+    <input type="email" name="trip[participants_attributes][INDEX][email]" /><br>
+    <button type="button" class="remove-participant btn btn-danger">Remove</button>
+  </div>
+</template>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let nextIndex = document.querySelectorAll('.participant-fields').length;
+
+    document.getElementById("add-participant").addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const template = document.getElementById("participant-template").innerHTML;
+      const newFields = template.replace(/INDEX/g, nextIndex);
+      nextIndex++;
+
+      const container = document.getElementById("participants-fields");
+      container.insertAdjacentHTML("beforeend", newFields);
+    });
+
+    document.getElementById("participants-fields").addEventListener("click", function (e) {
+      if (e.target && e.target.classList.contains("remove-participant")) {
+        const container = e.target.closest(".participant-fields");
+        const destroyInput = container.querySelector("input.destroy-flag");
+
+        if (destroyInput) {
+          destroyInput.value = "1";
+          container.style.display = "none";
+        } else {
+          container.remove();
+        }
+      }
+    });
+  });
+</script>

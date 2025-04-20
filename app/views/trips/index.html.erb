@@ -8,6 +8,9 @@
       <li>
         <%= link_to trip.name, trip_path(trip) %> — 
         <%= trip.start_date %> to <%= trip.end_date %>
+        |
+        <%= button_to "Delete", trip_path(trip), method: :delete, data: { turbo_confirm: "Delete this trip?" }, form: { data: { turbo: false }, style: "display: inline" }, class: "text-danger" %>
+        <%= link_to "Edit", edit_trip_path(trip), class: "btn btn-outline-primary" %>
       </li>
     <% end %>
   </ul>
