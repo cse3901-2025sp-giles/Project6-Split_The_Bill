@@ -31,11 +31,17 @@
   <!-- Expenses -->
   <div class="mb-4">
     <h3>Expenses</h3>
+    <!-- Currency Toggle -->
+    <div class="text-center mb-4">
+      <button id="currency-toggle" class="btn btn-outline-secondary">
+        Switch to EUR
+      </button>
+    </div>
     <% @trip.expenses.each do |expense| %>
       <div class="border p-3 mb-2 rounded">
         <p class="mb-1">
           <strong><%= expense.payer_name %></strong> paid
-          $<%= expense.amount %> for
+          <span class = "currency-character">$</span><span class = "currency-amount" data-usd-amount="<%= expense.amount %>"><%= expense.amount %></span> for
           <%= expense.description %> on
           <%= expense.date&.strftime("%b %d, %Y") %>
           (<%= pluralize(expense.participants.count, "person") %> shared)
@@ -60,7 +66,7 @@
       <% @trip.participants.each do |p| %>
         <% total_paid = @trip.expenses.where(payer_name: p.name).sum(:amount) %>
         <% total_owed = @trip.expenses.joins(:participants).where(participants: { id: p.id }).sum("expenses.amount") / @trip.expenses.joins(:participants).where(participants: { id: p.id }).count.to_f rescue 0 %>
-        <li><strong><%= p.name %></strong> paid $<%= total_paid.round(2) %></li>
+        <li><strong><%= p.name %></strong> paid <span class = "currency-character">$</span><span class = "currency-amount" data-usd-amount="<%= total_paid %>"><%= total_paid.round(2) %></span></li>
       <% end %>
     </ul>
   </div>
@@ -75,5 +81,33 @@
     <% end %>
   </div>
 </div>
+
+<script>
+      document.addEventListener("DOMContentLoaded", function() {
+        let currency = "USD";
+        const exchangeRate = 0.92;
+        const currencyButton = document.getElementById("currency-toggle");
+
+        currencyButton.addEventListener("click", function() {
+          const isUSD = (currency === "USD");
+          currency = isUSD ? "EUR" : "USD";
+          currencyButton.innerHTML = `Switch to ${isUSD ? "USD" : "EUR"}`;
+
+          document.querySelectorAll(".currency-amount").forEach(el => {
+            const usd = parseFloat(el.getAttribute("data-usd-amount"));
+            if (isNaN(usd)) {
+              return;
+            }
+            const convertedAmount = isUSD ? usd * exchangeRate : usd / exchangeRate;
+            el.innerHTML = `${convertedAmount.toFixed(2)}`;
+            el.setAttribute("data-usd-amount", convertedAmount);
+          });
+
+          document.querySelectorAll(".currency-character").forEach(charEl => {
+            charEl.innerHTML = currency === "USD" ? "$" : "€";
+          })
+        });
+      });
+</script>
 
 <!-- Optional: Your toggle chart script can go here or on the expense breakdown page -->
