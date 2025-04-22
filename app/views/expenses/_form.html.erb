@@ -1,4 +1,15 @@
 <%= form_with model: [@trip, @expense] do |f| %>
+  <% if @expense.errors.any? %>
+  <div class="alert alert-danger">
+    <h5>There were some problems:</h5>
+    <ul>
+      <% @expense.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
   <div>
     <%= f.label :description %><br>
     <%= f.text_field :description %>

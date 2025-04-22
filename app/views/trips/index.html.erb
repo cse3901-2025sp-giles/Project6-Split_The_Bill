@@ -1,19 +1,33 @@
-<h1>Your Trips</h1>
+<div class="container my-5">
+  <h1 class="text-center mb-4">Welcome, <%= current_user.email %>!</h1>
 
-<%= link_to "Create a New Trip", new_trip_path, class: "btn btn-primary" %>
+  <!-- Total Spending -->
+  <div class="alert alert-primary text-center">
+    Total Spent Across All Trips:
+    <strong>
+      $<%= @trips.sum { |t| t.expenses.where(payer_name: current_user.email).sum(:amount) }.round(2) %>
+    </strong>
+  </div>
 
-<% if @trips.any? %>
-  <ul>
-    <% @trips.each do |trip| %>
-      <li>
-        <%= link_to trip.name, trip_path(trip) %> — 
-        <%= trip.start_date %> to <%= trip.end_date %>
-        |
-        <%= button_to "Delete", trip_path(trip), method: :delete, data: { turbo_confirm: "Delete this trip?" }, form: { data: { turbo: false }, style: "display: inline" }, class: "text-danger" %>
-        <%= link_to "Edit", edit_trip_path(trip), class: "btn btn-outline-primary" %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No trips yet. Start by creating one!</p>
-<% end %>
+  <!-- Trip List -->
+  <h3 class="mb-3">Your Trips</h3>
+  <% if @trips.any? %>
+    <div class="list-group mb-4">
+      <% @trips.each do |trip| %>
+        <a href="<%= trip_path(trip) %>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+          <div>
+            <strong><%= trip.name %></strong><br>
+            <small><%= trip.start_date %> – <%= trip.end_date %></small>
+          </div>
+          <span class="badge bg-success rounded-pill">
+            $<%= trip.expenses.where(payer_name: current_user.email).sum(:amount).round(2) %>
+          </span>
+        </a>
+      <% end %>
+    </div>
+  <% else %>
+    <p>You haven't created any trips yet.</p>
+  <% end %>
+
+  <%= link_to "Create New Trip", new_trip_path, class: "btn btn-success" %>
+</div>
