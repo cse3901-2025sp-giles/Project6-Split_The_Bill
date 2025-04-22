@@ -1,0 +1,32 @@
+<div class="participant-fields border rounded p-3 mb-3 position-relative">
+  <button type="button" class="remove-participant btn-close position-absolute top-0 end-0 p-2" aria-label="Remove"></button>
+
+  <% if defined?(f) && f %>
+    <%# Render fields using the form builder (for existing/pre-built records) %>
+    <% if f.object.persisted? %>
+      <%= f.hidden_field :_destroy, class: 'participant-destroy-flag', value: '0' %>
+    <% end %>
+    <div class="row">
+      <div class="col-md-6 mb-2 mb-md-0">
+        <%= f.label :name, class: "form-label" %>
+        <%= f.text_field :name, class: "form-control", required: true %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, class: "form-control", required: true %>
+      </div>
+    </div>
+  <% else %>
+    <%# Render raw HTML fields (for the JavaScript template using the 'index' variable) %>
+    <div class="row">
+      <div class="col-md-6 mb-2 mb-md-0">
+        <label class="form-label" for="trip_participants_attributes_<%= index %>_name">Name</label>
+        <input type="text" name="trip[participants_attributes][<%= index %>][name]" id="trip_participants_attributes_<%= index %>_name" class="form-control" required="true" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="trip_participants_attributes_<%= index %>_email">Email</label>
+        <input type="email" name="trip[participants_attributes][<%= index %>][email]" id="trip_participants_attributes_<%= index %>_email" class="form-control" required="true" />
+      </div>
+    </div>
+  <% end %>
+</div> 

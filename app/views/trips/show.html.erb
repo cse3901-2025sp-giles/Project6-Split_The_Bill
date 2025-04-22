@@ -1,0 +1,113 @@
+<div class="container my-5">
+  <!-- Trip Info -->
+  <h1 class="text-center text-capitalize"><%= @trip.name %></h1>
+  <p class="text-center text-muted">
+    <strong>Start:</strong> <%= @trip.start_date %> |
+    <strong>End:</strong> <%= @trip.end_date %>
+  </p>
+
+  <hr>
+
+  <!-- Participants -->
+  <div class="mb-4">
+    <h3>Participants</h3>
+    <ul>
+      <% @trip.participants.each do |p| %>
+        <li><%= p.name %> (<%= p.email %>)</li>
+      <% end %>
+    </ul>
+  </div>
+
+  <!-- Actions -->
+  <div class="mb-4">
+    <%= link_to 'Back to Trips', trips_path, class: 'btn btn-secondary me-2' %>
+    <%= link_to "Add Expense", new_trip_expense_path(@trip), class: "btn btn-primary me-2" %>
+    <%= link_to "Edit Trip", edit_trip_path(@trip), class: "btn btn-outline-secondary me-2" %>
+  </div>
+
+  <hr>
+
+  <!-- Expenses -->
+  <div class="mb-4">
+    <h3>Expenses</h3>
+    <!-- Currency Toggle -->
+    <div class="text-center mb-4">
+      <button id="currency-toggle" class="btn btn-outline-secondary">
+        Switch to EUR
+      </button>
+    </div>
+    <% @trip.expenses.each do |expense| %>
+      <div class="border p-3 mb-2 rounded">
+        <%# Find participant name matching the payer's email, fallback to email if not found %>
+        <% payer_display_name = expense.payer ? (@participants_by_email[expense.payer.email]&.name || expense.payer.email) : "Unknown Payer" %>
+        <p class="mb-1">
+          <strong><%= payer_display_name %></strong> paid
+          <span class = "currency-character">$</span><span class = "currency-amount" data-original-usd-amount="<%= expense.amount %>"><%= expense.amount %></span> for
+          <%= expense.description %> on
+          <%= expense.date&.strftime("%b %d, %Y") %>
+          (<%= pluralize(expense.participants.count, "person") %> shared)
+        </p>
+        <div>
+          <%= link_to "Edit", edit_trip_expense_path(@trip, expense), class: "btn btn-sm btn-outline-warning me-2" %>
+          <%= button_to "Delete", trip_expense_path(@trip, expense),
+              method: :delete,
+              data: { confirm: "Are you sure you want to delete this expense?" },
+              class: "btn btn-sm btn-outline-danger" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <!-- Participant Balances -->
+  <div class="mb-4">
+    <h3>Participant Totals Paid</h3>
+    <ul>
+      <% @trip.participants.each do |p| %>
+        <%# Use the pre-calculated totals from the controller %>
+        <% total_paid = @participant_totals[p.name] || 0 %>
+        <li><strong><%= p.name %></strong> paid <span class = "currency-character">$</span><span class = "currency-amount" data-original-usd-amount="<%= total_paid %>"><%= total_paid.round(2) %></span></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <hr>
+
+  <!-- Settlements -->
+  <div class="mb-4">
+    <h3>Who Owes What</h3>
+    <% @settlements.each do |transaction| %>
+      <p><%= transaction %></p>
+    <% end %>
+  </div>
+</div>
+
+<script>
+      document.addEventListener("DOMContentLoaded", function() {
+        let currency = "USD";
+        const exchangeRate = 0.92;
+        const currencyButton = document.getElementById("currency-toggle");
+
+        currencyButton.addEventListener("click", function() {
+          const isUSD = (currency === "USD");
+          currency = isUSD ? "EUR" : "USD";
+          currencyButton.innerHTML = `Switch to ${isUSD ? "USD" : "EUR"}`;
+
+          document.querySelectorAll(".currency-amount").forEach(el => {
+            const originalUSD = parseFloat(el.getAttribute("data-original-usd-amount"));
+            if (isNaN(originalUSD)) {
+              return;
+            }
+            const convertedAmount = isUSD ? originalUSD * exchangeRate : originalUSD;
+            el.innerHTML = `${convertedAmount.toFixed(2)}`;
+          });
+
+          document.querySelectorAll(".currency-character").forEach(charEl => {
+            charEl.innerHTML = currency === "USD" ? "$" : "€";
+          })
+        });
+      });
+</script>
+
+<!-- Optional: Your toggle chart script can go here or on the expense breakdown page -->

@@ -1,0 +1,99 @@
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h2 class="card-title text-center">Edit Trip: <%= @trip.name %></h2>
+        </div>
+        <div class="card-body">
+          <%# Note: Using local: true and data: { turbo: false } might be necessary %>
+          <%# if Turbo interferes with the dynamic participant fields JavaScript. %>
+          <%# For now, let's assume Turbo works or is disabled globally/elsewhere. %>
+          <%= form_with model: @trip, local: true do |f| %>
+            <%# Trip Details %>
+            <div class="mb-3">
+              <%= f.label :name, class: "form-label" %>
+              <%= f.text_field :name, class: "form-control", required: true %>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <%= f.label :start_date, class: "form-label" %>
+                <%= f.date_field :start_date, class: "form-control", required: true %>
+              </div>
+              <div class="col-md-6">
+                <%= f.label :end_date, class: "form-label" %>
+                <%= f.date_field :end_date, class: "form-control", required: true %>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <%# Participants Section %>
+            <h4 class="mb-3">Participants</h4>
+            <div id="participants-fields" class="mb-3">
+              <%# Render existing participant fields using the partial %>
+              <%= f.fields_for :participants do |p| %>
+                <%= render 'participant_fields', f: p %>
+              <% end %>
+            </div>
+            <button type="button" id="add-participant" class="btn btn-outline-secondary btn-sm mb-4">+ Add Participant</button>
+
+            <%# Form Actions %>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <%= link_to 'Back to Trip', trip_path(@trip), class: 'btn btn-secondary me-md-2' %>
+              <%= f.submit "Update Trip", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Template for new participant fields %>
+<template id="participant-template">
+  <%= render 'participant_fields', index: 'INDEX' %>
+</template>
+
+<%# JavaScript for adding/removing participants (same as new.html.erb) %>
+<script>
+  document.addEventListener('turbo:load', () => {
+    let nextIndex = document.querySelectorAll('.participant-fields').length;
+    const participantsContainer = document.getElementById("participants-fields");
+    const addButton = document.getElementById("add-participant");
+    const templateElement = document.getElementById("participant-template");
+
+    if (!participantsContainer || !addButton || !templateElement) {
+      console.error("Required elements for participant fields not found.");
+      return;
+    }
+
+    const addParticipantField = () => {
+      const templateHTML = templateElement.innerHTML;
+      const newFieldsHTML = templateHTML.replace(/INDEX/g, nextIndex);
+      participantsContainer.insertAdjacentHTML("beforeend", newFieldsHTML);
+      nextIndex++;
+    };
+
+    addButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      addParticipantField();
+    });
+
+    participantsContainer.addEventListener("click", (e) => {
+      if (e.target && e.target.classList.contains("remove-participant")) {
+        let fieldWrapper = e.target.closest(".participant-fields");
+        let destroyFlag = fieldWrapper.querySelector('.participant-destroy-flag');
+        if (destroyFlag) {
+          destroyFlag.value = '1';
+          fieldWrapper.style.display = 'none';
+        } else {
+          fieldWrapper.remove();
+        }
+      }
+    });
+
+    // No need to add initial fields on edit page
+  });
+</script>

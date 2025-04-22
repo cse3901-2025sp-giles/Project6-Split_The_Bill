@@ -1,0 +1,39 @@
+<div class="container my-5">
+  <!-- Summary Card -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body text-center">
+      <h5 class="card-title">Total Spent Across All Trips</h5>
+      <p class="card-text fs-3 fw-bold">
+        $<%= @total_spent.round(2) %>
+      </p>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Your Trips</h3>
+    <%= link_to "Create New Trip", new_trip_path, class: "btn btn-success" %>
+  </div>
+
+  <% if @trips.any? %>
+    <div class="list-group mb-4 shadow-sm">
+      <% @trips.each do |trip| %>
+        <a href="<%= trip_path(trip) %>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+          <div>
+            <strong class="fs-5"><%= trip.name %></strong><br>
+            <small class="text-muted"><%= trip.start_date&.strftime("%b %d, %Y") %> – <%= trip.end_date&.strftime("%b %d, %Y") %></small>
+          </div>
+          <span class="badge bg-primary rounded-pill fs-6">
+            You Paid: $<%= trip.expenses.select { |e| e.payer_id == current_user.id }.sum(&:amount).round(2) %>
+          </span>
+        </a>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center p-4 border rounded bg-light">
+      <p>You haven't created or been added to any trips yet.</p>
+      <%= link_to "Create Your First Trip", new_trip_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <%# Moved Create New Trip button to top right next to heading %>
+</div>
