@@ -50,9 +50,9 @@ A Ruby on Rails application designed to help groups track and settle shared expe
 
 2.  **Clone the repository (if you haven't already):**
     ```bash
-    # Replace with your repository URL if needed
-    git clone <your-repository-url>
-    cd <repository-directory>
+   
+    git clone https://github.com/cse3901-2025sp-giles/Project6-Split_The_Bill.git
+    cd Project6-Split_The_Bill
     ```
 
 3.  **Install dependencies:**
