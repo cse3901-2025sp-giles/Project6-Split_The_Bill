@@ -1,0 +1,13 @@
+Git'R Done
+Overall: (125/180)
+Repo: git@github.com:cse3901-2025sp-giles/Project6-Split_The_Bill.git
+Documentation: (20/20) Good information here.  Well done.  In-code comments are good too.
+Correctness: (32/35) Use two decimal points for cents.  If you're going to let people participate in the trip and share expenses, they should be able to pay for things as well.  It appears that you only let registered users pay.
+Functionality/Features: (23/25) The switch to Euros button doesn't seem to do anything.  Otherwise, the functionality seems fine.  You can edit just about everything and it works well.  The "Who Owes What" section is clear.
+Aesthetics: (13/20) Landing page is really boring, and the styling could be a little better throughout.  It looks strange when buttons are next to each other (like edit and delete on the trip page) and don't line up.   I
+Style - HTML/CSS/JS (15/15)
+Style - Ruby (12/15) Get in the habit of running rubocop on your Rails code, at least the controllers, like you did previous Ruby labs.
+Design - HTML/CSS/JS (15/15)
+Design - Ruby/Rails (15/15)
+Presentation (20/20)
+Notes:  The project itself was not on the branch that got tagged.  10 point penalty.  No mention of what each member contributed to the controller.  30 point penalty.
